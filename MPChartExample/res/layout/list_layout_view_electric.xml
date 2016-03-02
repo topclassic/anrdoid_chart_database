@@ -1,0 +1,39 @@
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+ 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:text="Medium Text"
+        android:layout_columnWeight="1"
+        android:id="@+id/OutletID"
+        android:textColor="#FFFFFF"
+        android:layout_row="0"
+        android:layout_column="1" />
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Medium Text"
+        android:layout_columnWeight="1"
+        android:id="@+id/OutletName"
+        android:textColor="#FFFFFF"
+        android:layout_row="1"
+        android:layout_column="1" />
+    
+
+     <LinearLayout
+        android:layout_width="match_parent"         
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#000000"
+        android:gravity="center"
+        android:layout_margin="20dp" >
+
+    </LinearLayout> 
+    
+
+     
+</GridLayout>
