@@ -63,7 +63,7 @@ public class MainView extends Activity implements OnItemClickListener {
 		lvOutlet.setOnItemClickListener(this);
 		
 		ReadData task1 = new ReadData();
-		task1.execute(new String[]{"http://192.168.43.130/elec_data.php?format=json"});
+		task1.execute(new String[]{"http://192.168.43.130/elec_index.php?format=json"});
 	}
 	
 	ArrayList<Outlet> listOutlet;
@@ -133,7 +133,7 @@ public class MainView extends Activity implements OnItemClickListener {
 					readoutlet.setOutletname(json.getString("outlet_name"));
 					readoutlet.setPower(json.getDouble("elec_power"));
 					readoutlet.setLimit(json.getInt("elec_limit"));
-					readoutlet.setDate_time(json.getString("date_time"));
+				//	readoutlet.setDate_time(json.getString("date_time"));
 				//	readoutlet.setLimit(json.getDouble("elec_limit"));
 				//	readoutlet.setDay(json.getInt("day"));
 				//	readoutlet.setMonth(json.getInt("month"));
@@ -194,7 +194,7 @@ public class MainView extends Activity implements OnItemClickListener {
 		    
 		    
 		    outletid.setText("  Outlet ID : " + showoutlet.getId()+"  ");
-		    outletname.setText("  Name : " + showoutlet.getDate_time()+"  ");
+		    outletname.setText("  Name : " + showoutlet.getOutletname()+"  ");
 		    
 		     			
 			return listItem;

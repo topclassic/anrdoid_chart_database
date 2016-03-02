@@ -18,15 +18,15 @@ public class MainActivity extends Activity {
     private ListView listView;
     private String names[] = {
     		" GRAPH VIEW",
-            " Edit",
-            " Set Limit",
+            " Edit Name Outlet",
+            " Set Unit Limit",
             " HELP"
     };
 
     private String desc[] = {
-            " You can look graph wat, bath and unit"+"\n"+" of outlet",
-            " Set outlet, you can create name for"+"\n"+" outlet",
-            " Switch on switch off to outlet",
+            " You can look graph watt, bath and unit"+"\n"+" of outlet",
+            " Fisrt contact outlet name is 'Unknown'"+"\n"+" You can change name so as 'Toilet' ",
+            " If energy electric high you can set"+"\n"+" limit to one outlet and all outlet ",
             " If you has problem, We can help you"
     };
 
