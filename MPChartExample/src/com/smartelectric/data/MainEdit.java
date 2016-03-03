@@ -50,9 +50,10 @@ public class MainEdit extends Activity implements OnItemClickListener {
 		setContentView(R.layout.main_editdata);
 		lvOutlet = (ListView)findViewById(R.id.ListViewOutlet);
 		lvOutlet.setOnItemClickListener(this);
-		
+		alertDialog();
 		ReadData task1 = new ReadData();
 		task1.execute(new String[]{"http://192.168.43.130/elec_index.php?format=json"});
+		
 	}
 	
 	ArrayList<Outlet> listOutlet;
@@ -182,7 +183,10 @@ public class MainEdit extends Activity implements OnItemClickListener {
 
 		    outletid.setText("  Outlet ID : " + showoutlet.getId()+"  ");
 		    outletname.setText("  Name : " + showoutlet.getOutletname()+"  ");
-		     			
+		    
+		    if(outletid.getText()==null){
+		    	
+		    }
 			return listItem;
 		}
 			
@@ -198,13 +202,15 @@ public class MainEdit extends Activity implements OnItemClickListener {
 	}
 	private void editDialog(){
 		AlertDialog.Builder builder = new AlertDialog.Builder(MainEdit.this);
-        builder.setTitle("Edit Name, Delete Outlet");
+        builder.setTitle("Edit Name, Delete Outlet")
+               .setIcon(R.drawable.tool);
         builder.setItems(format, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				if(which == 0){
 					AlertDialog.Builder builder = new AlertDialog.Builder(MainEdit.this);
-					builder.setTitle("Edit Name");
+					builder.setTitle("Edit Name")
+					       .setIcon(R.drawable.tool);
 					builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -223,14 +229,30 @@ public class MainEdit extends Activity implements OnItemClickListener {
 				}// end if 1
 				
 				if(which == 1){
-					UpdateData taskUpdate = new UpdateData();
-					updateTrigger = "Delete";
-					taskUpdate.execute(new String[]{"http://192.168.43.130/elec_edit.php?format=json&id=" +main_id});
-					Intent intent = new Intent(getApplicationContext(),MainEdit.class);
- 		 			startActivity(intent); 
- 		 			finish();
-				}// end if 2
-				
+					AlertDialog.Builder builder = new AlertDialog.Builder(MainEdit.this);
+					builder.setTitle("Delete Outlet")
+					       .setIcon(R.drawable.tool)
+						   .setMessage("All data will be deleted, Are you sure delete outlet?");
+					builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						UpdateData taskUpdate = new UpdateData();
+						updateTrigger = "Delete";
+						taskUpdate.execute(new String[]{"http://192.168.43.130/elec_edit.php?format=json&id=" +main_id});
+						Intent intent = new Intent(getApplicationContext(),MainEdit.class);
+	 		 			startActivity(intent); 
+	 		 			finish();
+						}
+					});
+					builder.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+								
+						
+					}
+					});
+					builder.show();						
+				}// end if 2				
 			}
 		}); 
         builder.show();
@@ -274,26 +296,33 @@ public class MainEdit extends Activity implements OnItemClickListener {
     			return true;	
     		}	
     		
-    		/*		@Override
+    	/*	@Override
     		protected void onPostExecute(Boolean result) {
     			if(dialog.isShowing()){
     				dialog.dismiss();
     			}
     			
     			if(result == false){
-    				Toast.makeText(MainSetlimit1.this, error, Toast.LENGTH_LONG).show();
+    				Toast.makeText(MainEdit.this, error, Toast.LENGTH_LONG).show();
     			}
     			else{
     				if(is1 == null){
-    					Toast.makeText(MainSetlimit1.this, "Sending Wrong Parameters", Toast.LENGTH_LONG).show();
+    					Toast.makeText(MainEdit.this, "Sending Wrong Parameters", Toast.LENGTH_LONG).show();
     				}
     				else{
-    					Toast.makeText(MainSetlimit1.this, "Edit Success", Toast.LENGTH_LONG).show();
+    					Toast.makeText(MainEdit.this, "Edit Success", Toast.LENGTH_LONG).show();
     					
     				}		
     			}
-    		}
-    		*/
+    		}*/
+    		
+    	}
+    	private void alertDialog(){
+    		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    		builder.setTitle("Not Outlet")		
+    			   .setMessage("Plaese connect outlet")
+    			   .setIcon(R.drawable.ic_launcher);
+    		builder.show();
     	}
     }
 

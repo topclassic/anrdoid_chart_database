@@ -219,8 +219,8 @@ public class MainSetlimit1 extends Activity implements OnItemClickListener {
 		};
 		picker.setOnValueChangedListener(myVal);
 		AlertDialog.Builder builder = new AlertDialog.Builder(this).setView(picker);
-		builder.setTitle("Select Limit");
-			//	.setIcon(R.mipmap.dialog_info);
+		builder.setTitle("Select Limit")
+		   	   .setIcon(R.drawable.meter);
 		builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
 			
 			@Override
