@@ -1,5 +1,5 @@
-
 package com.xxmassdeveloper.mpchartexample;
+
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,59 +24,168 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.smartelectric.data.Outlet;
 import com.xxmassdeveloper.mpchartexample.listviewitems.ChartItem;
 import com.xxmassdeveloper.mpchartexample.listviewitems.LineChartItem;
-import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-/**
- * Demonstrates the use of charts inside a ListView. IMPORTANT: provide a
- * specific height attribute for the chart inside your listview-item
- * 
- * @author Philipp Jahoda
- */
-public class DayGraph extends DemoBase implements OnItemClickListener{
-	ListView lvOutlet;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        
-        ReadData task1 = new ReadData();
-		task1.execute(new String[]{"http://192.168.43.130/elec_index.php?format=json"});
+public class DayGraph extends Activity{
+	ChartDataAdapter cda;
+	ArrayList<ChartItem> list;
+	ListView lv;
+	int main_id;
+	String main_outletname;
+	int limit;
+	int test;
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 		
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_listview_chart);
-        
-        ListView lv = (ListView) findViewById(R.id.listView1);
+	    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+	    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+	    setContentView(R.layout.activity_listview_chart);
+	//	setContentView(R.layout.setlimit);
+		
+		lv = (ListView) findViewById(R.id.listView1);
+		
+		
 
-        ArrayList<ChartItem> list = new ArrayList<ChartItem>();
+		
+		Bundle extras = getIntent().getExtras();
+		if(extras == null){
+			return;
+		}
+		
+		main_id = extras.getInt("main_id");
+		
+		ReadData task1 = new ReadData();
+		task1.execute(new String[]{"http://192.168.43.130/elec_setlimit.php?format=json&id=" + main_id});
+		
+		
 
-        // 30 items
-        for (int i = 0; i < 3; i++) {
-            
-                list.add(new LineChartItem(generateDataLine(i + 1), getApplicationContext()));         
-        }      
-        ChartDataAdapter cda = new ChartDataAdapter(getApplicationContext(), list);
-        lv.setAdapter(cda);
-    }
-    ArrayList<Outlet> listOutlet;
-    OutletArrayAdapter adapter;
-    /** adapter that supports 3 different item types */
+
+	}
+	
+	Outlet outlet = new Outlet();
+	
+	private class ReadData extends AsyncTask<String, Void, Boolean>{
+
+		private ProgressDialog dialog = new ProgressDialog(DayGraph.this);
+		private String error;
+		
+		InputStream is1;
+		String text = "";
+		
+		@Override
+		protected void onPreExecute() {
+			dialog.setMessage("Reading Data...");
+			dialog.show();
+		}
+		
+
+		@Override
+		protected Boolean doInBackground(String... urls) {
+			for(String url: urls){
+				try {
+					HttpClient client = new DefaultHttpClient();
+					HttpPost post = new HttpPost(url); 
+					HttpResponse response = client.execute(post);
+					is1 = response.getEntity().getContent();
+					
+				} catch (ClientProtocolException e) {
+					error = "ClientProtocolException: " + e.getMessage();
+					return false;
+				} catch (IOException e) {
+					error = "ClientProtocolException: " + e.getMessage();
+				}
+				
+			}
+			
+			BufferedReader reader;
+						
+			try {
+				reader = new BufferedReader(new InputStreamReader(is1 ,"iso-8859-1"), 8);
+				String line = null;
+				
+				while ((line = reader.readLine()) != null) {
+					text += line + "\n";
+				}
+				
+				is1.close();	
+				
+			} catch (UnsupportedEncodingException e) {
+				error = "Unsupport Encoding: " + e.getMessage();
+			} catch (IOException e) {
+				error = "Error IO: " + e.getMessage();
+			}
+						
+			try {
+				JSONArray jArray = new JSONArray(text);
+				for(int i=0; i<jArray.length(); i++){
+					JSONObject json = jArray.getJSONObject(i);
+										
+					outlet.setId(json.getInt("outlet_id"));
+					outlet.setOutletID(json.getString("outlet_id"));
+					outlet.setOutletname(json.getString("outlet_name"));
+					outlet.setPower(json.getDouble("elec_power"));
+					outlet.setLimit(json.getInt("elec_limit")); 
+				//	outlet.setDay(json.getInt("day"));
+				//	outlet.setMonth(json.getInt("month"));
+				//	outlet.setYear(json.getInt("year"));
+				}
+			} catch (JSONException e) {
+				error = "Error Convert to JSON or Error JSON Format: " + e.getMessage();
+			}
+			
+			
+			return true;
+		}
+		
+		@Override
+		protected void onPostExecute(Boolean result) {
+			if(dialog.isShowing()){
+				dialog.dismiss();
+			}
+			
+			if(result == false){
+				Toast.makeText(DayGraph.this, error, Toast.LENGTH_LONG).show();
+			}
+			else{	
+				test = outlet.getId();
+				list = new ArrayList<ChartItem>();
+		        // 30 items
+		        for (int i = 0; i < 3; i++) {		            
+		               list.add(new LineChartItem(generateDataLine(i + 1), getApplicationContext()));
+		          
+		        }	
+				alertDialog();
+		        cda = new ChartDataAdapter(getApplicationContext(), list);
+		        lv.setAdapter(cda);	
+			}
+		}
+		
+	}//End of private class ReadData
+
+
+	private void alertDialog(){
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Not Outlet"+outlet.getOutletname()+outlet.getId())		
+			   .setMessage("Plaese connect outlet")
+			   .setIcon(R.drawable.ic_launcher);
+		builder.show();
+	}					
+	
+	/** adapter that supports 3 different item types */
     private class ChartDataAdapter extends ArrayAdapter<ChartItem> {
         
         public ChartDataAdapter(Context context, List<ChartItem> objects) {
@@ -99,19 +208,13 @@ public class DayGraph extends DemoBase implements OnItemClickListener{
             return 3; // we have 3 different item-types
         }
     }
-    
-    /**
-     * generates a random ChartData object with just one DataSet
-     * 
-     * @return
-     */
     private LineData generateDataLine(int cnt) {
     	LineData cd; 
     	LineDataSet d1;
         ArrayList<Entry> e1 = new ArrayList<Entry>();
 
         for (int i = 0; i < 24; i++) {
-            e1.add(new Entry((int) (Math.random() * 65) + 40, i));
+            e1.add(new Entry(test, i));
         }
         if(cnt == 1){
             d1 = new LineDataSet(e1, "Watt ");
@@ -184,128 +287,6 @@ public class DayGraph extends DemoBase implements OnItemClickListener{
         m.add("24");
         return m;
     }
-    private class ReadData extends AsyncTask<String, Void, Boolean>{
-
-		private ProgressDialog dialog = new ProgressDialog(DayGraph.this);
-		private String error;
-		
-		InputStream is1;
-		String text = "";
-		
-		@Override
-		protected void onPreExecute() {
-			dialog.setMessage("Reading Data...");
-			dialog.show();
-		}
-
-		@Override
-		protected Boolean doInBackground(String... urls) {
-			for(String url: urls){
-				try {
-					HttpClient client = new DefaultHttpClient();
-					HttpPost post = new HttpPost(url); 
-					HttpResponse response = client.execute(post);
-					is1 = response.getEntity().getContent();
-					
-				} catch (ClientProtocolException e) {
-					error = "ClientProtocolException: " + e.getMessage();
-					return false;
-				} catch (IOException e) {
-					error = "ClientProtocolException: " + e.getMessage();
-				}
-				
-			}
-			BufferedReader reader;
-			
-			try {
-				reader = new BufferedReader(new InputStreamReader(is1 ,"iso-8859-1"), 8);
-				String line = null;
-				
-				while ((line = reader.readLine()) != null) {
-					text += line + "\n";
-				}
-				is1.close();	
-				
-			} catch (UnsupportedEncodingException e) {
-				error = "Unsupport Encoding: " + e.getMessage();
-			} catch (IOException e) {
-				error = "Error IO: " + e.getMessage();
-			}
-			
-			listOutlet = new ArrayList<Outlet>();
-			
-			try {
-				JSONArray jArray = new JSONArray(text);
-				for(int i=0; i<jArray.length(); i++){
-					JSONObject json = jArray.getJSONObject(i);									
-					
-					Outlet readoutlet = new Outlet();
-					readoutlet.setId(json.getInt("outlet_id"));
-				//	readoutlet.setOutletID(json.getString("outlet_id"));
-					readoutlet.setOutletname(json.getString("outlet_name"));
-					readoutlet.setPower(json.getDouble("elec_power"));
-				//	readoutlet.setLimit(json.getInt("elec_limit"));
-				//	readoutlet.setLimit(json.getDouble("elec_limit"));
-				//	readoutlet.setDay(json.getInt("day"));
-				//	readoutlet.setMonth(json.getInt("month"));
-				//	readoutlet.setYear(json.getInt("year"));
-					
 	
-					listOutlet.add(readoutlet);									
-				}
-			} catch (JSONException e) {
-				error = "Error Convert to JSON or Error JSON Format: " + e.getMessage();
-			}
-			return true;
-		}
-			@Override
-			protected void onPostExecute(Boolean result) {
-			if(dialog.isShowing()){
-				dialog.dismiss();
-			}
-			
-			if(result == false){
-				Toast.makeText(DayGraph.this, error, Toast.LENGTH_LONG).show();
-			}
-			else{
-				adapter = new OutletArrayAdapter(DayGraph.this, R.layout.list_layout_edit, listOutlet);
-				lvOutlet.setAdapter(adapter);
-			}
-		}
-    }
-    private class OutletArrayAdapter extends ArrayAdapter<Outlet>{
-    	Context context;
-		int resource;
-		List<Outlet> outletList;
-		public OutletArrayAdapter(Context context, int resource,List<Outlet> outletList) {
-			super(context, resource, outletList);
-			this.context = context;
-			this.resource = resource;
-			this.outletList = outletList;	
-		}
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			View listItem = convertView;
-			
-			LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-		    listItem = inflater.inflate(resource, parent, false);
-		    
-		    TextView outletid = (TextView) listItem.findViewById(R.id.OutletID);
-		    TextView outletname = (TextView) listItem.findViewById(R.id.OutletName);
-
-		    Outlet showoutlet = listOutlet.get(position);
-		    
-
-		    outletid.setText("  Outlet ID : " + showoutlet.getId()+"  ");
-		    outletname.setText("  Name : " + showoutlet.getOutletname()+"  ");    
-		   
-			return listItem;
-			}	
-    	}
-    	public void onItemClick(AdapterView<?> parent, View clickedView, int pos, long id) {
-    		Outlet clickedOutlet = (Outlet) adapter.getItem(pos);
-    		//	main_id = clickedOutlet.getId();
-
-    	}
 
 }

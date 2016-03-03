@@ -232,7 +232,7 @@ public class MainView extends Activity implements OnItemClickListener {
                   		int main_id = clickedOutlet.getId();
                   		double elec_power = clickedOutlet.getPower();
                   		int day ;
-                  		Intent in = new Intent(getApplicationContext(),DayTest2.class);
+                  		Intent in = new Intent(getApplicationContext(),DayGraph.class);
                   		in.putExtra("main_id", main_id);
                   		in.putExtra("elec_power", elec_power);
                   		
