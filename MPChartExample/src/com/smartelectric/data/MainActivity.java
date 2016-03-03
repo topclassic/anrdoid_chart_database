@@ -58,7 +58,7 @@ public class MainActivity extends Activity {
             	case 0 : 	Intent intent0 = new Intent(getApplicationContext(),MainView.class);
 		 					startActivity(intent0); 	
 		 					break;
-            	case 1 : 	Intent intent1 = new Intent(getApplicationContext(),MainEditData.class);
+            	case 1 : 	Intent intent1 = new Intent(getApplicationContext(),MainEdit.class);
 		 		 			startActivity(intent1); 	
 		 		 			break;
             	case 2 : 	Intent intent2 = new Intent(getApplicationContext(),MainSetlimit1.class);

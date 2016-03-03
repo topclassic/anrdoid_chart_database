@@ -61,6 +61,7 @@
         <activity android:name="DayTest"></activity>
         <activity android:name="DayTest2"></activity>
         
+        <activity android:name="com.smartelectric.data.MainEdit" ></activity>
       	<activity android:name="com.smartelectric.data.MainSetlimit1" ></activity>
         <activity android:name="com.smartelectric.data.MainSetlimit" ></activity>
       	<activity android:name="com.smartelectric.data.Setlimit" ></activity>

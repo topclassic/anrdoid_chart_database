@@ -36,38 +36,31 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainSetlimit1 extends Activity implements OnItemClickListener {
-	
+public class MainEdit extends Activity implements OnItemClickListener {
+	private static final String[] format = {"Edit Name","Delete Outlet"};
 	ListView lvOutlet;
-	TextView show;
-	Button select;
-	int limit;
-
+	int main_id;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_editdata);
 		lvOutlet = (ListView)findViewById(R.id.ListViewOutlet);
 		lvOutlet.setOnItemClickListener(this);
-
-
 		
 		ReadData task1 = new ReadData();
-		task1.execute(new String[]{"http://192.168.43.130/elec_setlimit.php?format=json"});
+		task1.execute(new String[]{"http://192.168.43.130/elec_index.php?format=json"});
 	}
-	Outlet outlet = new Outlet();
+	
 	ArrayList<Outlet> listOutlet;
 	OutletArrayAdapter adapter;
 	
 	private class ReadData extends AsyncTask<String, Void, Boolean>{
 
-		private ProgressDialog dialog = new ProgressDialog(MainSetlimit1.this);
+		private ProgressDialog dialog = new ProgressDialog(MainEdit.this);
 		private String error;
 		
 		InputStream is1;
@@ -151,10 +144,10 @@ public class MainSetlimit1 extends Activity implements OnItemClickListener {
 			}
 			
 			if(result == false){
-				Toast.makeText(MainSetlimit1.this, error, Toast.LENGTH_LONG).show();
+				Toast.makeText(MainEdit.this, error, Toast.LENGTH_LONG).show();
 			}
 			else{
-				adapter = new OutletArrayAdapter(MainSetlimit1.this, R.layout.list_layout_setlimit, listOutlet);
+				adapter = new OutletArrayAdapter(MainEdit.this, R.layout.list_layout_edit, listOutlet);
 				lvOutlet.setAdapter(adapter);
 			}
 		}
@@ -180,16 +173,15 @@ public class MainSetlimit1 extends Activity implements OnItemClickListener {
 			
 			LayoutInflater inflater = ((Activity) context).getLayoutInflater();
 		    listItem = inflater.inflate(resource, parent, false);
-		    		
+		    
+		    TextView outletid = (TextView) listItem.findViewById(R.id.OutletID);
 		    TextView outletname = (TextView) listItem.findViewById(R.id.OutletName);
-		    TextView elecpower = (TextView) listItem.findViewById(R.id.ElecPower);
-		    TextView eleclimit = (TextView) listItem.findViewById(R.id.ElecLimit);
 
 		    Outlet showoutlet = listOutlet.get(position);
 		    
+
+		    outletid.setText("  Outlet ID : " + showoutlet.getId()+"  ");
 		    outletname.setText("  Name : " + showoutlet.getOutletname()+"  ");
-		    elecpower.setText("  Unit: "+showoutlet.getPower());
-		    eleclimit.setText("  Limit: "+showoutlet.getLimit());		 
 		     			
 			return listItem;
 		}
@@ -197,109 +189,111 @@ public class MainSetlimit1 extends Activity implements OnItemClickListener {
 	}//end of private class ProductArrayAdapter
 
 	
-	int main_id;
+	
 	@Override
 	public void onItemClick(AdapterView<?> parent, View clickedView, int pos, long id) {
 		Outlet clickedOutlet = (Outlet) adapter.getItem(pos);
 		main_id = clickedOutlet.getId();
-		numberPicker();		
+		editDialog();	
 	}
-	
-	//Dialog numberPicker
-	private void numberPicker(){
-		NumberPicker picker = new NumberPicker(this);
-		picker.setMaxValue(20000);
-		picker.setMinValue(0);
-		NumberPicker.OnValueChangeListener myVal = new NumberPicker.OnValueChangeListener() {			
-			@Override
-			public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-				//newVal is number select
-				limit = newVal;
-			}
-		};
-		picker.setOnValueChangedListener(myVal);
-		AlertDialog.Builder builder = new AlertDialog.Builder(this).setView(picker);
-		builder.setTitle("Select Limit");
-			//	.setIcon(R.mipmap.dialog_info);
-		builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-			
+	private void editDialog(){
+		AlertDialog.Builder builder = new AlertDialog.Builder(MainEdit.this);
+        builder.setTitle("Edit Name, Delete Outlet");
+        builder.setItems(format, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				outlet.setLimit(limit);
-				UpdateData taskUpdate = new UpdateData();
-				updateTrigger = "Update";
-				taskUpdate.execute(new String[]{"http://192.168.43.130/elec_edit.php?id=" + main_id});
-				Intent intent = new Intent(getApplicationContext(),MainSetlimit1.class);
-				startActivity(intent); 
-				finish();
+				if(which == 0){
+					AlertDialog.Builder builder = new AlertDialog.Builder(MainEdit.this);
+					builder.setTitle("Edit Name");
+					builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+							
+					}
+				});
+					builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						
+						
+						
+					}
+				});
+				builder.show();	
+				}// end if 1
+				
+				if(which == 1){
+					UpdateData taskUpdate = new UpdateData();
+					updateTrigger = "Delete";
+					taskUpdate.execute(new String[]{"http://192.168.43.130/elec_edit.php?format=json&id=" +main_id});
+					Intent intent = new Intent(getApplicationContext(),MainEdit.class);
+ 		 			startActivity(intent); 
+ 		 			finish();
+				}// end if 2
+				
 			}
-		});
-		builder.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-			}
-		});
-		builder.show();
+		}); 
+        builder.show();
 	}
-	String updateTrigger = "";	
-	private class UpdateData extends AsyncTask<String, Void, Boolean>{
-		private ProgressDialog dialog = new ProgressDialog(MainSetlimit1.this);
-		private String error;
-		
-		String text = "";
-		
-		@Override
-		protected void onPreExecute() {
-			dialog.setMessage("Editting Data...");
-			dialog.show();
-		}
-		
-		InputStream is1;
-		@Override
-		protected Boolean doInBackground(String... urls) {
-			for(String url: urls){
-				try {
-					ArrayList<NameValuePair> pairs = new ArrayList<NameValuePair>();
-					pairs.add(new BasicNameValuePair("btnSubmit", updateTrigger));				
-					pairs.add(new BasicNameValuePair("txtElec_limit",  outlet.getLimit()+"".toString()));					
-					
-					HttpClient client = new DefaultHttpClient();
-					HttpPost post = new HttpPost(url); 
-					post.setEntity(new UrlEncodedFormEntity(pairs));
-					HttpResponse response = client.execute(post);
-					is1 = response.getEntity().getContent();
-					
-				} catch (ClientProtocolException e) {
-					error = "ClientProtocolException: " + e.getMessage();
-					return false;
-				} catch (IOException e) {
-					error = "ClientProtocolException: " + e.getMessage();
-				}				
-			}
-			
-			return true;	
-		}	
-		
-		/*		@Override
-		protected void onPostExecute(Boolean result) {
-			if(dialog.isShowing()){
-				dialog.dismiss();
-			}
-			
-			if(result == false){
-				Toast.makeText(MainSetlimit1.this, error, Toast.LENGTH_LONG).show();
-			}
-			else{
-				if(is1 == null){
-					Toast.makeText(MainSetlimit1.this, "Sending Wrong Parameters", Toast.LENGTH_LONG).show();
-				}
-				else{
-					Toast.makeText(MainSetlimit1.this, "Edit Success", Toast.LENGTH_LONG).show();
-					
-				}		
-			}
-		}
-		*/
-	}
-}
+        String updateTrigger = "";	
+    	private class UpdateData extends AsyncTask<String, Void, Boolean>{
+    		private ProgressDialog dialog = new ProgressDialog(MainEdit.this);
+    		private String error;
+    		
+    		String text = "";
+    		
+    		@Override
+    		protected void onPreExecute() {
+    			dialog.setMessage("Editting Data...");
+    			dialog.show();
+    		}
+    		
+    		InputStream is1;
+    		@Override
+    		protected Boolean doInBackground(String... urls) {
+    			for(String url: urls){
+    				try {
+    					ArrayList<NameValuePair> pairs = new ArrayList<NameValuePair>();
+    					pairs.add(new BasicNameValuePair("btnSubmit", updateTrigger));				
+    			//		pairs.add(new BasicNameValuePair("txtElec_limit",  outlet.getLimit()+"".toString()));					
+    					
+    					HttpClient client = new DefaultHttpClient();
+    					HttpPost post = new HttpPost(url); 
+    					post.setEntity(new UrlEncodedFormEntity(pairs));
+    					HttpResponse response = client.execute(post);
+    					is1 = response.getEntity().getContent();
+    					
+    				} catch (ClientProtocolException e) {
+    					error = "ClientProtocolException: " + e.getMessage();
+    					return false;
+    				} catch (IOException e) {
+    					error = "ClientProtocolException: " + e.getMessage();
+    				}				
+    			}
+    			
+    			return true;	
+    		}	
+    		
+    		/*		@Override
+    		protected void onPostExecute(Boolean result) {
+    			if(dialog.isShowing()){
+    				dialog.dismiss();
+    			}
+    			
+    			if(result == false){
+    				Toast.makeText(MainSetlimit1.this, error, Toast.LENGTH_LONG).show();
+    			}
+    			else{
+    				if(is1 == null){
+    					Toast.makeText(MainSetlimit1.this, "Sending Wrong Parameters", Toast.LENGTH_LONG).show();
+    				}
+    				else{
+    					Toast.makeText(MainSetlimit1.this, "Edit Success", Toast.LENGTH_LONG).show();
+    					
+    				}		
+    			}
+    		}
+    		*/
+    	}
+    }
+
