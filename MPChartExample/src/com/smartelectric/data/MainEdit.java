@@ -217,8 +217,7 @@ public class MainEdit extends Activity implements OnItemClickListener {
 					builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						
-						outlet.setOutletname(editName.getText().toString());
+
 						UpdateData taskUpdate = new UpdateData();
 						updateTrigger = "Update";
 						taskUpdate.execute(new String[]{"http://192.168.43.130/elec_editoutlet.php?format=json&id=" +main_id});
@@ -247,7 +246,7 @@ public class MainEdit extends Activity implements OnItemClickListener {
 					public void onClick(DialogInterface dialog, int which) {
 						UpdateData taskUpdate = new UpdateData();
 						updateTrigger = "Delete";
-						taskUpdate.execute(new String[]{"http://192.168.43.130/elec_edit.php?format=json&id=" +main_id});
+						taskUpdate.execute(new String[]{"http://192.168.43.130/elec_delete.php?format=json&id=" +main_id});
 						Intent intent = new Intent(getApplicationContext(),MainEdit.class);
 	 		 			startActivity(intent); 
 	 		 			finish();
@@ -289,7 +288,7 @@ public class MainEdit extends Activity implements OnItemClickListener {
     				try {
     					ArrayList<NameValuePair> pairs = new ArrayList<NameValuePair>();
     					pairs.add(new BasicNameValuePair("btnSubmit", updateTrigger));				
-    					pairs.add(new BasicNameValuePair("txtOutlet_name", outlet.getOutletname().toString()));					
+    					pairs.add(new BasicNameValuePair("txtOutlet_name", editName.getText().toString()));					
     					
     					HttpClient client = new DefaultHttpClient();
     					HttpPost post = new HttpPost(url); 
