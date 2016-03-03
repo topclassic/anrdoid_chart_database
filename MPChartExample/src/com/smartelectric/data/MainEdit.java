@@ -36,26 +36,28 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainEdit extends Activity implements OnItemClickListener {
-	private static final String[] format = {"Edit Name","Delete Outlet"};
+	private static final String[] format = {"Edit Name","Delete Outlet","Cancel"};
 	ListView lvOutlet;
+	EditText editName;
 	int main_id;
+	String outlet_name;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_editdata);
 		lvOutlet = (ListView)findViewById(R.id.ListViewOutlet);
 		lvOutlet.setOnItemClickListener(this);
-		alertDialog();
 		ReadData task1 = new ReadData();
 		task1.execute(new String[]{"http://192.168.43.130/elec_index.php?format=json"});
 		
 	}
-	
+	Outlet outlet = new Outlet();
 	ArrayList<Outlet> listOutlet;
 	OutletArrayAdapter adapter;
 	
@@ -101,7 +103,6 @@ public class MainEdit extends Activity implements OnItemClickListener {
 				while ((line = reader.readLine()) != null) {
 					text += line + "\n";
 				}
-				
 				is1.close();	
 				
 			} catch (UnsupportedEncodingException e) {
@@ -115,18 +116,19 @@ public class MainEdit extends Activity implements OnItemClickListener {
 			try {
 				JSONArray jArray = new JSONArray(text);
 				for(int i=0; i<jArray.length(); i++){
-					JSONObject json = jArray.getJSONObject(i);
-						
+					JSONObject json = jArray.getJSONObject(i);									
+					
 					Outlet readoutlet = new Outlet();
 					readoutlet.setId(json.getInt("outlet_id"));
 				//	readoutlet.setOutletID(json.getString("outlet_id"));
 					readoutlet.setOutletname(json.getString("outlet_name"));
 					readoutlet.setPower(json.getDouble("elec_power"));
-					readoutlet.setLimit(json.getInt("elec_limit"));
+				//	readoutlet.setLimit(json.getInt("elec_limit"));
 				//	readoutlet.setLimit(json.getDouble("elec_limit"));
 				//	readoutlet.setDay(json.getInt("day"));
 				//	readoutlet.setMonth(json.getInt("month"));
 				//	readoutlet.setYear(json.getInt("year"));
+					
 	
 					listOutlet.add(readoutlet);									
 				}
@@ -182,11 +184,8 @@ public class MainEdit extends Activity implements OnItemClickListener {
 		    
 
 		    outletid.setText("  Outlet ID : " + showoutlet.getId()+"  ");
-		    outletname.setText("  Name : " + showoutlet.getOutletname()+"  ");
-		    
-		    if(outletid.getText()==null){
-		    	
-		    }
+		    outletname.setText("  Name : " + showoutlet.getOutletname()+"  ");    
+		   
 			return listItem;
 		}
 			
@@ -198,31 +197,41 @@ public class MainEdit extends Activity implements OnItemClickListener {
 	public void onItemClick(AdapterView<?> parent, View clickedView, int pos, long id) {
 		Outlet clickedOutlet = (Outlet) adapter.getItem(pos);
 		main_id = clickedOutlet.getId();
+		outlet_name = clickedOutlet.getOutletname();
 		editDialog();	
 	}
 	private void editDialog(){
 		AlertDialog.Builder builder = new AlertDialog.Builder(MainEdit.this);
+		editName = new EditText(this);
+		editName.setText(outlet_name);
         builder.setTitle("Edit Name, Delete Outlet")
                .setIcon(R.drawable.tool);
         builder.setItems(format, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				if(which == 0){
-					AlertDialog.Builder builder = new AlertDialog.Builder(MainEdit.this);
-					builder.setTitle("Edit Name")
+					final AlertDialog.Builder builder = new AlertDialog.Builder(MainEdit.this);					
+					builder.setTitle("Edit Name"+"\n"+"Outlet ID: "+main_id)
+					       .setView(editName)
 					       .setIcon(R.drawable.tool);
-					builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+					builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-							
+						
+						outlet.setOutletname(editName.getText().toString());
+						UpdateData taskUpdate = new UpdateData();
+						updateTrigger = "Update";
+						taskUpdate.execute(new String[]{"http://192.168.43.130/elec_editoutlet.php?format=json&id=" +main_id});
+						Intent intent = new Intent(getApplicationContext(),MainEdit.class);
+	 		 			startActivity(intent); 
+	 		 			finish();
 					}
 				});
-					builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+					builder.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						
-						
-						
+						dialog.dismiss();
 					}
 				});
 				builder.show();	
@@ -230,8 +239,8 @@ public class MainEdit extends Activity implements OnItemClickListener {
 				
 				if(which == 1){
 					AlertDialog.Builder builder = new AlertDialog.Builder(MainEdit.this);
-					builder.setTitle("Delete Outlet")
-					       .setIcon(R.drawable.tool)
+					builder.setTitle("Delete"+"\n"+"Outlet ID: "+main_id)
+					       .setIcon(R.drawable.bin)
 						   .setMessage("All data will be deleted, Are you sure delete outlet?");
 					builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
 					@Override
@@ -248,11 +257,14 @@ public class MainEdit extends Activity implements OnItemClickListener {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 								
-						
+						dialog.dismiss();
 					}
 					});
 					builder.show();						
-				}// end if 2				
+				}// end if 2	
+				if(which == 2){
+					dialog.dismiss();
+				}
 			}
 		}); 
         builder.show();
@@ -277,7 +289,7 @@ public class MainEdit extends Activity implements OnItemClickListener {
     				try {
     					ArrayList<NameValuePair> pairs = new ArrayList<NameValuePair>();
     					pairs.add(new BasicNameValuePair("btnSubmit", updateTrigger));				
-    			//		pairs.add(new BasicNameValuePair("txtElec_limit",  outlet.getLimit()+"".toString()));					
+    					pairs.add(new BasicNameValuePair("txtOutlet_name", outlet.getOutletname().toString()));					
     					
     					HttpClient client = new DefaultHttpClient();
     					HttpPost post = new HttpPost(url); 

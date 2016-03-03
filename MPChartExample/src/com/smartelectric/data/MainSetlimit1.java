@@ -48,11 +48,12 @@ public class MainSetlimit1 extends Activity implements OnItemClickListener {
 	TextView show;
 	Button select;
 	int limit;
+	String outlet_name;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main_editdata);
+		setContentView(R.layout.main_setlimit);
 		lvOutlet = (ListView)findViewById(R.id.ListViewOutlet);
 		lvOutlet.setOnItemClickListener(this);
 
@@ -202,6 +203,7 @@ public class MainSetlimit1 extends Activity implements OnItemClickListener {
 	public void onItemClick(AdapterView<?> parent, View clickedView, int pos, long id) {
 		Outlet clickedOutlet = (Outlet) adapter.getItem(pos);
 		main_id = clickedOutlet.getId();
+		outlet_name = clickedOutlet.getOutletname();
 		numberPicker();		
 	}
 	
@@ -214,21 +216,20 @@ public class MainSetlimit1 extends Activity implements OnItemClickListener {
 			@Override
 			public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
 				//newVal is number select
-				limit = newVal;
+				outlet.setLimit(newVal);
 			}
 		};
 		picker.setOnValueChangedListener(myVal);
 		AlertDialog.Builder builder = new AlertDialog.Builder(this).setView(picker);
-		builder.setTitle("Select Limit")
+		builder.setTitle("Select Limit"+"\n"+"Name: "+outlet_name)
 		   	   .setIcon(R.drawable.meter);
 		builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				outlet.setLimit(limit);
 				UpdateData taskUpdate = new UpdateData();
 				updateTrigger = "Update";
-				taskUpdate.execute(new String[]{"http://192.168.43.130/elec_edit.php?id=" + main_id});
+				taskUpdate.execute(new String[]{"http://192.168.43.130/elec_editlimit.php?id=" + main_id});
 				Intent intent = new Intent(getApplicationContext(),MainSetlimit1.class);
 				startActivity(intent); 
 				finish();
@@ -263,7 +264,6 @@ public class MainSetlimit1 extends Activity implements OnItemClickListener {
 					ArrayList<NameValuePair> pairs = new ArrayList<NameValuePair>();
 					pairs.add(new BasicNameValuePair("btnSubmit", updateTrigger));				
 					pairs.add(new BasicNameValuePair("txtElec_limit",  outlet.getLimit()+"".toString()));					
-					
 					HttpClient client = new DefaultHttpClient();
 					HttpPost post = new HttpPost(url); 
 					post.setEntity(new UrlEncodedFormEntity(pairs));

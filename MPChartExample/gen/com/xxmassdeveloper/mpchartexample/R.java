@@ -28,21 +28,23 @@ public final class R {
     }
     public static final class drawable {
         public static final int anima=0x7f020000;
-        public static final int butsetlimit=0x7f020001;
-        public static final int buttonallfirst=0x7f020002;
-        public static final int buttonlimit=0x7f020003;
-        public static final int edit=0x7f020004;
-        public static final int graph=0x7f020005;
-        public static final int help=0x7f020006;
-        public static final int ic_launcher=0x7f020007;
-        public static final int introtwo=0x7f020008;
-        public static final int logoendpu=0x7f020009;
-        public static final int logoendpu2=0x7f02000a;
-        public static final int marker=0x7f02000b;
-        public static final int marker2=0x7f02000c;
-        public static final int meter=0x7f02000d;
-        public static final int tool=0x7f02000e;
-        public static final int view=0x7f02000f;
+        public static final int bin=0x7f020001;
+        public static final int bin2=0x7f020002;
+        public static final int butsetlimit=0x7f020003;
+        public static final int buttonallfirst=0x7f020004;
+        public static final int buttonlimit=0x7f020005;
+        public static final int edit=0x7f020006;
+        public static final int graph=0x7f020007;
+        public static final int help=0x7f020008;
+        public static final int ic_launcher=0x7f020009;
+        public static final int introtwo=0x7f02000a;
+        public static final int logoendpu=0x7f02000b;
+        public static final int logoendpu2=0x7f02000c;
+        public static final int marker=0x7f02000d;
+        public static final int marker2=0x7f02000e;
+        public static final int meter=0x7f02000f;
+        public static final int tool=0x7f020010;
+        public static final int view=0x7f020011;
     }
     public static final class id {
         public static final int Button01=0x7f090016;
