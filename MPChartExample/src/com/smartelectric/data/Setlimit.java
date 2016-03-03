@@ -46,6 +46,7 @@ public class Setlimit extends Activity implements OnClickListener {
 	Button btnUpdate, btnDelete;
 	int main_id;
 	String main_outletname;
+	int limit;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

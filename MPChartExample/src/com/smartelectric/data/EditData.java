@@ -19,6 +19,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.xxmassdeveloper.mpchartexample.R;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -29,14 +31,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.xxmassdeveloper.mpchartexample.R;
 
 public class EditData extends Activity implements OnClickListener {
 	
@@ -170,32 +168,35 @@ public class EditData extends Activity implements OnClickListener {
 		if(sender.getId() == R.id.btnUpdate){
 			UpdateData taskUpdate = new UpdateData();
 			updateTrigger = "Update";
-			taskUpdate.execute(new String[]{"http://192.168.43.130/elec_edit.php?id=" + main_id});
+			taskUpdate.execute(new String[]{"http://192.168.43.130/elec_edit.php?format=json&id=" +main_id});
 			Intent in = new Intent(this, MainEditData.class);
 			startActivity(in);
-			finish();
 		}
 		else if(sender.getId() == R.id.btnDelete){
 			Builder msgBox = new AlertDialog.Builder(this);
-			msgBox.setMessage("Are you sure to clear text");
-			msgBox.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface arg0, int arg1) {
-					etextoutletname.setText("");
-
-				}
-			});
-			msgBox.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+			msgBox.setTitle("Delete Confirmation");
+			msgBox.setMessage("Are you sure to delete it?");
+			msgBox.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 				
 				@Override
 				public void onClick(DialogInterface arg0, int arg1) {
-									
+					// TODO Auto-generated method stub
+					
 				}
 			});
-		
-			msgBox.show();
-			
-
+			msgBox.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface arg0, int arg1) {
+					UpdateData taskUpdate = new UpdateData();
+					updateTrigger = "Delete";
+					taskUpdate.execute(new String[]{"http://192.168.43.130/elec_edit.php?format=json&id=" +main_id});
+					Intent in = new Intent(EditData.this, MainEditData.class);
+					startActivity(in);	
+					
+				}
+			});
+			msgBox.show();				
 		}
 		
 	}
