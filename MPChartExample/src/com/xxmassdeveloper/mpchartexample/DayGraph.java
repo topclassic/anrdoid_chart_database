@@ -69,10 +69,8 @@ public class DayGraph extends Activity{
 		main_id = extras.getInt("main_id");
 		
 		ReadData task1 = new ReadData();
-		task1.execute(new String[]{"http://192.168.43.130/elec_setlimit.php?format=json&id=" + main_id});
-		
-		
-
+		task1.execute(new String[]{"http://192.168.43.130/elec_data.php?format=json&id=" + main_id});
+				
 
 	}
 	
@@ -179,7 +177,7 @@ public class DayGraph extends Activity{
 
 	private void alertDialog(){
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Not Outlet"+outlet.getOutletname()+outlet.getId())		
+		builder.setTitle("Not Outlet"+outlet.getId())		
 			   .setMessage("Plaese connect outlet")
 			   .setIcon(R.drawable.ic_launcher);
 		builder.show();
