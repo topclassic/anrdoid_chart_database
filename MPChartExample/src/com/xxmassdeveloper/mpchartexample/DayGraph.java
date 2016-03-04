@@ -167,7 +167,6 @@ public class DayGraph extends Activity{
 				Toast.makeText(DayGraph.this, error, Toast.LENGTH_LONG).show();
 			}
 			else{	
-				test = outlet.getId();
 				unit = (float)outlet.getUnit();
 				watt = (float)outlet.getWatt();
 				
@@ -197,7 +196,6 @@ public class DayGraph extends Activity{
 		               list.add(new LineChartItem(generateDataLine(j + 1), getApplicationContext()));
 		          
 		        }	
-				alertDialog();
 		        cda = new ChartDataAdapter(getApplicationContext(), list);
 		        lv.setAdapter(cda);	
 			}
