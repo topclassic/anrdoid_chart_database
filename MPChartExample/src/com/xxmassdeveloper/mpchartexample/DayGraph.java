@@ -40,6 +40,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 public class DayGraph extends Activity{
+	float watt;
+	float unit;
+	float bath;
 	ChartDataAdapter cda;
 	ArrayList<ChartItem> list;
 	ListView lv;
@@ -133,13 +136,18 @@ public class DayGraph extends Activity{
 					JSONObject json = jArray.getJSONObject(i);
 										
 					outlet.setId(json.getInt("outlet_id"));
-					outlet.setOutletID(json.getString("outlet_id"));
-					outlet.setOutletname(json.getString("outlet_name"));
-					outlet.setPower(json.getDouble("elec_power"));
-					outlet.setLimit(json.getInt("elec_limit")); 
+				//	outlet.setOutletID(json.getString("outlet_id"));
+				//	outlet.setOutletname(json.getString("outlet_name"));
+				//	outlet.setPower(json.getDouble("elec_power"));
+				//	outlet.setLimit(json.getInt("elec_limit")); 
+					outlet.setWatt(json.getDouble("watt"));
+					outlet.setUnit(json.getDouble("unit"));
+					outlet.setDate_time(json.getString("date_time"));
 				//	outlet.setDay(json.getInt("day"));
 				//	outlet.setMonth(json.getInt("month"));
 				//	outlet.setYear(json.getInt("year"));
+					
+				
 				}
 			} catch (JSONException e) {
 				error = "Error Convert to JSON or Error JSON Format: " + e.getMessage();
@@ -160,10 +168,33 @@ public class DayGraph extends Activity{
 			}
 			else{	
 				test = outlet.getId();
+				unit = (float)outlet.getUnit();
+				watt = (float)outlet.getWatt();
+				
+				for(int i = 0; i <= unit; i++){
+				if(i <= 5){
+					bath = 0;
+				}else if(i >= 6 && i <= 15){
+					bath = bath +(float) 1.3576;
+				}else if(i >= 16 && i <= 25){
+					bath = bath +(float) 1.5445;
+				}else if(i >= 26 && i<= 35){
+					bath = bath +(float) 1.7968;
+				}else if(i >= 36 && i <= 100){
+					bath = bath +(float) 2.1800;
+				}else if(i >= 101 && i <= 150){
+					bath = bath +(float) 2.734;
+				}else if(i >= 151 && i <= 400){
+					bath = bath +(float) 2.7781;
+				}else if(i>400){
+					bath = bath +(float) 2.9780;
+				}
+				}
+				
 				list = new ArrayList<ChartItem>();
-		        // 30 items
-		        for (int i = 0; i < 3; i++) {		            
-		               list.add(new LineChartItem(generateDataLine(i + 1), getApplicationContext()));
+				   
+		        for (int j = 0; j < 3; j++) {		            
+		               list.add(new LineChartItem(generateDataLine(j + 1), getApplicationContext()));
 		          
 		        }	
 				alertDialog();
@@ -177,8 +208,8 @@ public class DayGraph extends Activity{
 
 	private void alertDialog(){
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Not Outlet"+outlet.getId())		
-			   .setMessage("Plaese connect outlet")
+		builder.setTitle("Not Outlet"+outlet.getDate_time())		
+			   .setMessage("Plaese connect outlet"+outlet.getId()+"\n"+bath)
 			   .setIcon(R.drawable.ic_launcher);
 		builder.show();
 	}					
@@ -210,10 +241,86 @@ public class DayGraph extends Activity{
     	LineData cd; 
     	LineDataSet d1;
         ArrayList<Entry> e1 = new ArrayList<Entry>();
+        ArrayList<Entry> e2 = new ArrayList<Entry>();
+        ArrayList<Entry> e3 = new ArrayList<Entry>();
+        
+            e1.add(new Entry(watt, 1));
+            e1.add(new Entry(watt, 2)); 
+            e1.add(new Entry(watt, 3)); 
+            e1.add(new Entry(watt, 4)); 
+            e1.add(new Entry(watt, 5)); 
+            e1.add(new Entry(watt, 6)); 
+            e1.add(new Entry(watt, 7)); 
+            e1.add(new Entry(watt, 8)); 
+            e1.add(new Entry(watt, 9)); 
+            e1.add(new Entry(watt, 10)); 
+            e1.add(new Entry(watt, 11)); 
+            e1.add(new Entry(watt, 12)); 
+            e1.add(new Entry(watt, 13)); 
+            e1.add(new Entry(watt, 14)); 
+            e1.add(new Entry(watt, 15)); 
+            e1.add(new Entry(watt, 16)); 
+            e1.add(new Entry(watt, 17)); 
+            e1.add(new Entry(watt, 18)); 
+            e1.add(new Entry(watt, 19)); 
+            e1.add(new Entry(watt, 20)); 
+            e1.add(new Entry(watt, 21)); 
+            e1.add(new Entry(watt, 22)); 
+            e1.add(new Entry(watt, 23)); 
+            e1.add(new Entry(watt, 24)); 
+            
 
-        for (int i = 0; i < 24; i++) {
-            e1.add(new Entry(test, i));
-        }
+            e2.add(new Entry(unit, 1));
+            e2.add(new Entry(unit, 2)); 
+            e2.add(new Entry(unit, 3)); 
+            e2.add(new Entry(unit, 4)); 
+            e2.add(new Entry(unit, 5)); 
+            e2.add(new Entry(unit, 6)); 
+            e2.add(new Entry(unit, 7)); 
+            e2.add(new Entry(unit, 8)); 
+            e2.add(new Entry(unit, 9)); 
+            e2.add(new Entry(unit, 10)); 
+            e2.add(new Entry(unit, 11)); 
+            e2.add(new Entry(unit, 12)); 
+            e2.add(new Entry(unit, 13)); 
+            e2.add(new Entry(unit, 14)); 
+            e2.add(new Entry(unit, 15)); 
+            e2.add(new Entry(unit, 16)); 
+            e2.add(new Entry(unit, 17)); 
+            e2.add(new Entry(unit, 18)); 
+            e2.add(new Entry(unit, 19)); 
+            e2.add(new Entry(unit, 20)); 
+            e2.add(new Entry(unit, 21)); 
+            e2.add(new Entry(unit, 22)); 
+            e2.add(new Entry(unit, 23)); 
+            e2.add(new Entry(unit, 24)); 
+           
+
+            e3.add(new Entry(bath, 1));
+            e3.add(new Entry(bath, 2)); 
+            e3.add(new Entry(bath, 3)); 
+            e3.add(new Entry(bath, 4)); 
+            e3.add(new Entry(bath, 5)); 
+            e3.add(new Entry(bath, 6)); 
+            e3.add(new Entry(bath, 7)); 
+            e3.add(new Entry(bath, 8)); 
+            e3.add(new Entry(bath, 9)); 
+            e3.add(new Entry(bath, 10)); 
+            e3.add(new Entry(bath, 11)); 
+            e3.add(new Entry(bath, 12)); 
+            e3.add(new Entry(bath, 13)); 
+            e3.add(new Entry(bath, 14)); 
+            e3.add(new Entry(bath, 15)); 
+            e3.add(new Entry(bath, 16)); 
+            e3.add(new Entry(bath, 17)); 
+            e3.add(new Entry(bath, 18)); 
+            e3.add(new Entry(bath, 19)); 
+            e3.add(new Entry(bath, 20)); 
+            e3.add(new Entry(bath, 21)); 
+            e3.add(new Entry(bath, 22)); 
+            e3.add(new Entry(bath, 23)); 
+            e3.add(new Entry(bath, 24)); 
+
         if(cnt == 1){
             d1 = new LineDataSet(e1, "Watt ");
             d1.setLineWidth(2.5f);
@@ -227,7 +334,7 @@ public class DayGraph extends Activity{
             cd = new LineData(getMonths(), sets);
         	
         }else if(cnt == 2){
-            d1 = new LineDataSet(e1, "Unit ");
+            d1 = new LineDataSet(e2, "Unit ");
             d1.setLineWidth(2.5f);
             d1.setCircleSize(4.5f);
             d1.setHighLightColor(Color.rgb(244, 117, 117));
@@ -238,9 +345,9 @@ public class DayGraph extends Activity{
 
             cd = new LineData(getMonths(), sets);
             
-        }else
+        }else 
 
-        d1 = new LineDataSet(e1, "Bath ");
+        d1 = new LineDataSet(e3, "Bath ");
         d1.setLineWidth(2.5f);
         d1.setCircleSize(4.5f);
         d1.setHighLightColor(Color.rgb(244, 117, 117));

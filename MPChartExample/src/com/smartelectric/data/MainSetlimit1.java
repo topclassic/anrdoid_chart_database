@@ -191,7 +191,7 @@ public class MainSetlimit1 extends Activity implements OnItemClickListener {
 		    outletname.setText("  Name : " + showoutlet.getOutletname()+"  ");
 		    elecpower.setText("  Unit: "+showoutlet.getPower());
 		    eleclimit.setText("  Limit: "+showoutlet.getLimit());		 
-		     			
+		    
 			return listItem;
 		}
 			
@@ -302,4 +302,13 @@ public class MainSetlimit1 extends Activity implements OnItemClickListener {
 		}
 		*/
 	}
+
+	private void alertDialog(){
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Not Outlet"+outlet.getDate_time())		
+			   .setMessage("Plaese connect outlet"+outlet.getOutletID())
+			   .setIcon(R.drawable.ic_launcher);
+		builder.show();
+	}	
+	
 }

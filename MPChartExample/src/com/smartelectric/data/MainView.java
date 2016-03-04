@@ -50,8 +50,7 @@ public class MainView extends Activity implements OnItemClickListener {
     private static final String[] format = {"Day","Month","Year"};
     private static final String[] day = {"1","2","3","4","5","6","7","8","9","10",
     									 "11","12","13","14","15","16","17","18",
-    									 "19","20","21","22","23","24","25","26",
-    									 "27","28","29","30","31"};
+    									 "19","20","21","22","23","24"};
     private static final String[] month = {"January","February","March","April","May","June","July","August","September","October","November","December"};
     private static final String[] year = {"2015","2016","2017","2018","2019","2020","2021","2022","2023","2024"};
 	ListView lvOutlet;
@@ -215,7 +214,8 @@ public class MainView extends Activity implements OnItemClickListener {
 		finish();	*/
 		
 		 AlertDialog.Builder builder = new AlertDialog.Builder(MainView.this);
-         builder.setTitle("Select Day, Month, Year");
+         builder.setTitle("Select Day, Month, Year")
+         		.setIcon(R.drawable.graph);
          builder.setItems(format, new DialogInterface.OnClickListener() {
             
          	@Override
@@ -223,7 +223,8 @@ public class MainView extends Activity implements OnItemClickListener {
                //  String selected = format[which];
               if(which == 0){           	               
             	  AlertDialog.Builder builder = new AlertDialog.Builder(MainView.this);
-                  builder.setTitle("Select Day");
+                  builder.setTitle("Select Day")
+                         .setIcon(R.drawable.graph);
                   builder.setItems(day, new DialogInterface.OnClickListener() {
                 	  
                 	  public void onClick(DialogInterface dialog, int which) {
@@ -263,13 +264,7 @@ public class MainView extends Activity implements OnItemClickListener {
                 		case 21 : day = 22; in.putExtra("day", day); startActivity(in); finish(); break;
                 		case 22 : day = 23; in.putExtra("day", day); startActivity(in); finish(); break;
                 		case 23 : day = 24; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 24 : day = 25; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 25 : day = 26; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 26 : day = 27; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 27 : day = 28; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 28 : day = 29; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 29 : day = 30; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 30 : day = 31; in.putExtra("day", day); startActivity(in); finish(); break;
+
                 		
                 		}
                 		  
@@ -282,7 +277,8 @@ public class MainView extends Activity implements OnItemClickListener {
          	}
               if(which == 1){
             	  AlertDialog.Builder builder = new AlertDialog.Builder(MainView.this);
-                  builder.setTitle("Select Month");
+                  builder.setTitle("Select Month")
+                         .setIcon(R.drawable.graph);
                   builder.setItems(month, new DialogInterface.OnClickListener() {
                 	  
                 	  public void onClick(DialogInterface dialog, int which) {
@@ -320,7 +316,8 @@ public class MainView extends Activity implements OnItemClickListener {
          	}
               if(which == 2){
             	  AlertDialog.Builder builder = new AlertDialog.Builder(MainView.this);
-                  builder.setTitle("Select Year");
+                  builder.setTitle("Select Year")
+                  		 .setIcon(R.drawable.graph);
                   builder.setItems(year, new DialogInterface.OnClickListener() {
                 	  
                 	  public void onClick(DialogInterface dialog, int which) {
@@ -330,8 +327,8 @@ public class MainView extends Activity implements OnItemClickListener {
                   		int year;
                   		Intent in = new Intent(getApplicationContext(),YearGraph.class);
                   		in.putExtra("main_id", main_id);
-
-                  		
+                  		startActivity(in);
+                  		finish();
                 		switch(which){
                 		
                 		case 0 : year = 2015; in.putExtra("year", year); startActivity(in); finish(); break;

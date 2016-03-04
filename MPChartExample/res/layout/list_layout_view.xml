@@ -1,7 +1,15 @@
 <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-
+ 
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="49dp"
+        android:layout_height="48dp"
+        android:layout_column="0"
+        android:layout_row="0"
+        android:layout_rowSpan="2"
+        android:src="@drawable/graph" />
  
     <TextView
         android:layout_width="wrap_content"
@@ -11,7 +19,8 @@
         android:id="@+id/OutletID"
         android:textColor="#FFFFFF"
         android:layout_row="0"
-        android:layout_column="1" />
+        android:layout_column="1" 
+        android:textSize="17sp" />
     
     <TextView
         android:layout_width="wrap_content"
@@ -20,10 +29,10 @@
         android:layout_columnWeight="1"
         android:id="@+id/OutletName"
         android:textColor="#FFFFFF"
-        android:layout_row="0"
-        android:layout_column="2" />
-    
-  
+        android:layout_row="1"
+        android:layout_column="1" 
+        android:textSize="17sp" />
+                   
      <LinearLayout
         android:layout_width="match_parent"         
         android:layout_height="wrap_content"

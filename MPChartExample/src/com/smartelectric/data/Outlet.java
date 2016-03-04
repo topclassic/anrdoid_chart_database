@@ -6,12 +6,14 @@ public class Outlet {
 	private String outletid;
 	private String outletname;
 	private double power;
+	private double watt;
+	private double unit;
 	private int limit;
 	private String date_time;
 	
 	public Outlet(){}
 
-	public Outlet(int id, String outletid, String outletname, double power, int limit, String date_time) {
+	public Outlet(int id, String outletid, String outletname, double power, int limit, String date_time, double watt, double unit) {
 		super();
 		this.id = id;
 		this.outletname = outletname;
@@ -19,9 +21,9 @@ public class Outlet {
 		this.power = power;
 		this.limit = limit;
 		this.date_time = date_time;
-	
+		this.watt = watt;
+		this.unit = unit;	
 	}
-
 	public int getId() {
 		return id;
 	}
@@ -66,5 +68,17 @@ public class Outlet {
 	}
 	public void setDate_time(String date_time){
 		this.date_time = date_time;
+	}
+	public double getWatt(){
+		return watt;
+	}
+	public void setWatt(double watt){
+		this.watt = watt;
+	}
+	public double getUnit(){
+		return unit;
+	}
+	public void setUnit(double unit){
+		this.unit = unit;
 	}
 }
