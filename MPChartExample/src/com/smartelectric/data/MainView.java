@@ -8,8 +8,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Test;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -18,6 +16,11 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.xxmassdeveloper.mpchartexample.DayGraph;
+import com.xxmassdeveloper.mpchartexample.MonthGraph;
+import com.xxmassdeveloper.mpchartexample.R;
+import com.xxmassdeveloper.mpchartexample.YearGraph;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -34,19 +37,12 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.mikephil.charting.charts.CombinedChart;
-import com.xxmassdeveloper.mpchartexample.CombinedChartActivity;
-import com.xxmassdeveloper.mpchartexample.DayGraph;
-import com.xxmassdeveloper.mpchartexample.DayTest;
-import com.xxmassdeveloper.mpchartexample.DayTest2;
-import com.xxmassdeveloper.mpchartexample.MonthGraph;
-import com.xxmassdeveloper.mpchartexample.R;
-import com.xxmassdeveloper.mpchartexample.YearGraph;
-
 public class MainView extends Activity implements OnItemClickListener {
+	int checkday, checkyear;
     private static final String[] format = {"Day","Month","Year"};
     private static final String[] day = {"1","2","3","4","5","6","7","8","9","10",
     									 "11","12","13","14","15","16","17","18",
@@ -205,13 +201,8 @@ public class MainView extends Activity implements OnItemClickListener {
 	
 	@Override
 	public void onItemClick(AdapterView<?> parent, View clickedView, final int pos, long id) {
-		/*Outlet clickedOutlet = (Outlet) adapter.getItem(pos);
-		int pro_id = clickedOutlet.getId();
+		final NumberPicker picker = new NumberPicker(this);
 		
-		Intent in = new Intent(this, EditData.class);
-		in.putExtra("pro_id", pro_id);
-		startActivity(in);
-		finish();	*/
 		
 		 AlertDialog.Builder builder = new AlertDialog.Builder(MainView.this);
          builder.setTitle("Select Day, Month, Year")
@@ -221,15 +212,26 @@ public class MainView extends Activity implements OnItemClickListener {
          	@Override
              public void onClick(DialogInterface dialog, int which) {
                //  String selected = format[which];
-              if(which == 0){           	               
-            	  AlertDialog.Builder builder = new AlertDialog.Builder(MainView.this);
-                  builder.setTitle("Select Day")
-                         .setIcon(R.drawable.graph);
-                  builder.setItems(day, new DialogInterface.OnClickListener() {
-                	  
-                	  public void onClick(DialogInterface dialog, int which) {
-                		  
-                		Outlet clickedOutlet = (Outlet) adapter.getItem(pos);
+              if(which == 0){     
+            	picker.setMaxValue(24);
+          		picker.setMinValue(1);
+          		NumberPicker.OnValueChangeListener myVal = new NumberPicker.OnValueChangeListener() {			
+          			@Override
+          			public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+          				//newVal is number select
+          				checkday = newVal;
+          			}
+          		};
+          		picker.setOnValueChangedListener(myVal);
+            		AlertDialog.Builder builder = new AlertDialog.Builder(MainView.this).setView(picker);
+            		builder.setTitle("Select Day")
+            			   .setIcon(R.drawable.graph);
+        			//	.setIcon(R.mipmap.dialog_info);
+            		builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+        			
+        			@Override
+        			public void onClick(DialogInterface dialog, int which) {
+        				Outlet clickedOutlet = (Outlet) adapter.getItem(pos);
                   		int main_id = clickedOutlet.getId();
                   		double elec_power = clickedOutlet.getPower();
                   		int day ;
@@ -237,43 +239,48 @@ public class MainView extends Activity implements OnItemClickListener {
                   		in.putExtra("main_id", main_id);
                   		in.putExtra("elec_power", elec_power);
                   		
-                  		
-                		switch(which){
-                		
-                		case 0 : day = 1; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 1 : day = 2; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 2 : day = 3; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 3 : day = 4; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 4 : day = 5; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 5 : day = 6; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 6 : day = 7; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 7 : day = 8; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 8 : day = 9; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 9 : day = 10; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 10 : day = 11; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 11 : day = 12; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 12 : day = 13; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 13 : day = 14; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 14 : day = 15; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 15 : day = 16; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 16 : day = 17; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 17 : day = 18; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 18 : day = 19; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 19 : day = 20; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 20 : day = 21; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 21 : day = 22; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 22 : day = 23; in.putExtra("day", day); startActivity(in); finish(); break;
-                		case 23 : day = 24; in.putExtra("day", day); startActivity(in); finish(); break;
+                  		switch(checkday){ 
+                  		case 0 : day = 0; in.putExtra("day", day); startActivity(in); finish(); break;
+                		case 1 : day = 1; in.putExtra("day", day); startActivity(in); finish(); break;
+                		case 2 : day = 2; in.putExtra("day", day); startActivity(in); finish(); break;
+                		case 3 : day = 3; in.putExtra("day", day); startActivity(in); finish(); break;
+                		case 4 : day = 4; in.putExtra("day", day); startActivity(in); finish(); break;
+                		case 5 : day = 5; in.putExtra("day", day); startActivity(in); finish(); break;
+                		case 6 : day = 6; in.putExtra("day", day); startActivity(in); finish(); break;
+                		case 7 : day = 7; in.putExtra("day", day); startActivity(in); finish(); break;
+                		case 8 : day = 8; in.putExtra("day", day); startActivity(in); finish(); break;
+                		case 9 : day = 9; in.putExtra("day", day); startActivity(in); finish(); break;
+                		case 10 : day = 10; in.putExtra("day", day); startActivity(in); finish(); break;
+                		case 11 : day = 11; in.putExtra("day", day); startActivity(in); finish(); break;
+                		case 12 : day = 12; in.putExtra("day", day); startActivity(in); finish(); break;
+                		case 13 : day = 13; in.putExtra("day", day); startActivity(in); finish(); break;
+                		case 14 : day = 14; in.putExtra("day", day); startActivity(in); finish(); break;
+                		case 15 : day = 15; in.putExtra("day", day); startActivity(in); finish(); break;
+                		case 16 : day = 16; in.putExtra("day", day); startActivity(in); finish(); break;
+                		case 17 : day = 17; in.putExtra("day", day); startActivity(in); finish(); break;
+                		case 18 : day = 18; in.putExtra("day", day); startActivity(in); finish(); break;
+                		case 19 : day = 19; in.putExtra("day", day); startActivity(in); finish(); break;
+                		case 20 : day = 20; in.putExtra("day", day); startActivity(in); finish(); break;
+                		case 21 : day = 21; in.putExtra("day", day); startActivity(in); finish(); break;
+                		case 22 : day = 22; in.putExtra("day", day); startActivity(in); finish(); break;
+                		case 23 : day = 23; in.putExtra("day", day); startActivity(in); finish(); break;
+                		case 24 : day = 24; in.putExtra("day", day); startActivity(in); finish(); break;
 
-                		
                 		}
                 		  
-                	  }
-                 
-                  
-              });           	              
-                  builder.create();
-                  builder.show();
+                  		
+        			}
+            		});
+            		builder.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+        			
+        			@Override
+        			public void onClick(DialogInterface dialog, int which) {
+        				dialog.dismiss();
+        			}
+            		});
+            	builder.create();
+        		builder.show();
+            	
          	}
               if(which == 1){
             	  AlertDialog.Builder builder = new AlertDialog.Builder(MainView.this);
@@ -315,43 +322,92 @@ public class MainView extends Activity implements OnItemClickListener {
                   builder.show();
          	}
               if(which == 2){
-            	  AlertDialog.Builder builder = new AlertDialog.Builder(MainView.this);
-                  builder.setTitle("Select Year")
-                  		 .setIcon(R.drawable.graph);
-                  builder.setItems(year, new DialogInterface.OnClickListener() {
-                	  
-                	  public void onClick(DialogInterface dialog, int which) {
-                		  
-                		Outlet clickedOutlet = (Outlet) adapter.getItem(pos);
-                  		int main_id = clickedOutlet.getId();	
-                  		int year;
-                  		Intent in = new Intent(getApplicationContext(),YearGraph.class);
-                  		in.putExtra("main_id", main_id);
-                  		startActivity(in);
-                  		finish();
-                		switch(which){
-                		
-                		case 0 : year = 2015; in.putExtra("year", year); startActivity(in); finish(); break;
-                		case 1 : year = 2016; in.putExtra("year", year); startActivity(in); finish(); break;
-                		case 2 : year = 2017; in.putExtra("year", year); startActivity(in); finish(); break;
-                		case 3 : year = 2018; in.putExtra("year", year); startActivity(in); finish(); break;
-                		case 4 : year = 2019; in.putExtra("year", year); startActivity(in); finish(); break;
-                		case 5 : year = 2020; in.putExtra("year", year); startActivity(in); finish(); break;
-                		case 6 : year = 2021; in.putExtra("year", year); startActivity(in); finish(); break;
-                		case 7 : year = 2022; in.putExtra("year", year); startActivity(in); finish(); break;
-                		case 8 : year = 2023; in.putExtra("year", year); startActivity(in); finish(); break;
-                		case 9 : year = 2024; in.putExtra("year", year); startActivity(in); finish(); break;
-                		
-                		}
-                		  
-                	  }              
-              });           	              
-                  builder.create();
-                  builder.show();
+            	  picker.setMaxValue(2024);
+            		picker.setMinValue(2015);
+            		NumberPicker.OnValueChangeListener myVal = new NumberPicker.OnValueChangeListener() {			
+            			@Override
+            			public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+            				//newVal is number select
+            				checkday = newVal;
+            			}
+            		};
+            		picker.setOnValueChangedListener(myVal);
+              		AlertDialog.Builder builder = new AlertDialog.Builder(MainView.this).setView(picker);
+              		builder.setTitle("Select Year")
+              			   .setIcon(R.drawable.graph);
+          			//	.setIcon(R.mipmap.dialog_info);
+              		builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+          			
+          			@Override
+          			public void onClick(DialogInterface dialog, int which) {
+          				Outlet clickedOutlet = (Outlet) adapter.getItem(pos);
+                    		int main_id = clickedOutlet.getId();
+                    		double elec_power = clickedOutlet.getPower();
+                    		int year ;
+                    		Intent in = new Intent(getApplicationContext(),YearGraph.class);
+                    		in.putExtra("main_id", main_id);
+                    		in.putExtra("elec_power", elec_power);
+                    		
+                    		switch(checkyear){               		
+                    		case 0 : year = 2015; in.putExtra("year", year); startActivity(in); finish(); break;
+                    		case 1 : year = 2016; in.putExtra("year", year); startActivity(in); finish(); break;
+                    		case 2 : year = 2017; in.putExtra("year", year); startActivity(in); finish(); break;
+                    		case 3 : year = 2018; in.putExtra("year", year); startActivity(in); finish(); break;
+                    		case 4 : year = 2019; in.putExtra("year", year); startActivity(in); finish(); break;
+                    		case 5 : year = 2020; in.putExtra("year", year); startActivity(in); finish(); break;
+                    		case 6 : year = 2021; in.putExtra("year", year); startActivity(in); finish(); break;
+                    		case 7 : year = 2022; in.putExtra("year", year); startActivity(in); finish(); break;
+                    		case 8 : year = 2023; in.putExtra("year", year); startActivity(in); finish(); break;
+                    		case 9 : year = 2024; in.putExtra("year", year); startActivity(in); finish(); break;
+                    		}
+                  		  
+                    		
+          			}
+              		});
+              		builder.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+          			
+          			@Override
+          			public void onClick(DialogInterface dialog, int which) {
+          				dialog.dismiss();
+          			}
+              		});
+              	builder.create();
+          		builder.show();
          	}
              }
          });           	              
          builder.create();
          builder.show();
+	}
+	private void numberPickerDay(){
+		NumberPicker picker = new NumberPicker(this);
+		picker.setMaxValue(24);
+		picker.setMinValue(1);
+		NumberPicker.OnValueChangeListener myVal = new NumberPicker.OnValueChangeListener() {			
+			@Override
+			public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+				//newVal is number select
+				checkday = newVal;
+			}
+		};
+		picker.setOnValueChangedListener(myVal);
+		AlertDialog.Builder builder = new AlertDialog.Builder(this).setView(picker);
+		builder.setTitle("Select Limit");
+			//	.setIcon(R.mipmap.dialog_info);
+		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+			}
+		});
+		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+		
+			}
+		});
+		builder.show();
 	}
 }
